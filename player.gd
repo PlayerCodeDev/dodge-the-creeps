@@ -1,4 +1,6 @@
 extends Area2D
+signal hit
+
 @export var speed = 400 
 var screen_size
 
@@ -6,7 +8,6 @@ var screen_size
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	hide()
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -36,3 +37,13 @@ func _process(delta: float) -> void:
 	
 	position += velocity * delta
 	position = position.clamp(Vector2.ZERO, screen_size)
+
+func _on_body_entered(body: Node2D) -> void:
+	hide() # desaparece el nodo jugador
+	hit.emit() # se emite la senal `hit`
+	$CollisionShape2D.set_deferred("disabled", true) # se desactiva la collision
+	
+func start(pos):
+	position = pos
+	show()
+	$CollisionShape2D.disabled = false
